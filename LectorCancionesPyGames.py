@@ -1,9 +1,8 @@
-import os
-import glob
-import serial
-import eyed3
+import os, glob, serial, eyed3
 import random
 import time
+import vlc
+import mutagen.mp3
 from time import sleep
 from pygame import mixer
 
@@ -47,9 +46,10 @@ def playMusica(listaMusica):
         para cargar una canción y reproducirla.
     """
     #   Se inicializa el mixer.
-    mixer.init()
+    mp3 = mutagen.mp3.MP3(listaMusica[0])
+    mixer.init(frequency=mp3.info.sample_rate)
     #   Se define volumen y carga canción.
-    mixer.music.load(listaMusica[4])
+    mixer.music.load(listaMusica[0])
     #   Le pone volumen mínimo a la canción.
     #   Limite de volumen es de 0 a 1.
     mixer.music.set_volume(0.1)
