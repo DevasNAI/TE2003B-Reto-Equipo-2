@@ -119,8 +119,8 @@ def reproducingMusic():
     temp = volumen
     contMute = 0
     index = 0
-    #   0 es el index, 1 es volumen temporal, 2 es contadorMute
-    auxParam = [index, temp, contMute]
+    #   0  es volumen temporal, 2 es contadorMute
+    auxParam = [volumen, 0]
 
     while(1):
         #   a es el input que recibe del teclado matricial
@@ -198,14 +198,14 @@ def reproducingMusic():
         #   Si la tecla # es presionada, Mutea por completo el volumen
         elif(teclado == '#'):
             #   Si el contador de mute es 0, se pone en Mute
-            if(contMute == 0):
-                temp = volumen
+            if(auxParam[1] == 0):
+                auxParam[0] = volumen
                 volumen = 0
-                contMute = 1
+                auxParam[1] = 1
             #   De lo contrario, se reestablece el volumen previo al Mute
-            elif(contMute == 1):
-                contMute = 0
-                volumen = temp
+            elif(auxParam[1] == 1):
+                auxParam[1] = 0
+                volumen = auxParam[0]
         elif(teclado == '*'):
             #   Genera un indice aleatorio
             index = shuffle(listaMusica, index)
