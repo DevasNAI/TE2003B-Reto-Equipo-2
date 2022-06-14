@@ -1,6 +1,7 @@
 import os
 import glob
 import eyed3
+import random
 from pygame import mixer
 
 
@@ -13,14 +14,17 @@ def contenidoMusical():
     """
     #   Obtiene la lista de los archivos en la carpeta
     listaMusica = os.listdir()
+    tempList = []
     #   Para cada elemento en la lista, borra los que no son .mp3
     for i in listaMusica:
         #   Si el elemento de la lista no termina con 3, lo borra.
-        if(i[-1] != '3'):
-            listaMusica.remove(i)
-            
-    print(listaMusica)
-    return listaMusica
+        if(i[-1] != '3'or i[-1] == 'y'):
+            continue
+        else:
+            tempList.append(i)
+            #print(i[-2:-1])
+    print(tempList)
+    return tempList
 
 #   Se definen las funciones de musica()
 def playMusica(listaMusica):
@@ -58,6 +62,45 @@ def getSongStuff(listaMusica, index):
              cancionStuff.tag.release_date, cancionStuff.tag.genre]
     return listaDatos
 
+def checkIndex(listaMusica, index, tipo):
+    """
+        Esta función es para revisar los índices
+        y evitar tronarla por error de indexación
+        Regresa el valor del indice
+    """
+    #   Si el caracter es M, es para subir
+    if(tipo == 'M'):
+        #   Si el indice es mayor al tamaño de la lista
+        if(index >= len(listaMusica)-1):
+            #   Regresa a la cancion 0
+            index = 0
+        else:
+            #   Incrementa el indice de la lista de canciones (baja en la lista)
+            index += 1
+     #   Si el caracter es M, es para bajar
+    if(tipo == 'm'):
+        #   Si el indice es menor a 0
+        if(index <= 0):
+            #   Incrementa el indice de la lista de canciones (baja en la lista)
+            index = len(listaMusica)-1
+        else:
+            #   Decrementa el indice de la lista de canciones (sube en la lista)
+            index -= 1 
+    return index
+
+def shuffle(listaMusica, index):
+    """
+        Esta función genera un indice aleatorio
+        para seleccionar aleatoriamente una canción.
+        Regresa un índice aleatorio.
+    """
+    rIndex = random.randint(0, (len(listaMusica)-1) )
+    while(rIndex == index):
+        rIndex = random.randint(0, (len(listaMusica)-1) )
+    return rIndex
+
+
+
 def reproducingMusic():
     """
         Esta funcion reproduce la musica
@@ -70,10 +113,14 @@ def reproducingMusic():
     
     #   Inicia a sonar la música
     mixer.music.play()
+    #   Lista auxiliar
+
     volumen = 0.1
     temp = volumen
     contMute = 0
-    index = 4
+    index = 0
+    #   0 es el index, 1 es volumen temporal, 2 es contadorMute
+    auxParam = [index, temp, contMute]
 
     while(1):
         #   a es el input que recibe del teclado matricial
@@ -86,12 +133,13 @@ def reproducingMusic():
             volumen -= 0.1
         #   Si el botón 2 es presionado, 
         elif(teclado == '2'):
-            #   Decrementa el indice de la lista de canciones (sube en la lista)
-            index -= 1
+            print(len(listaMusica))
+            #   Actualiza el valor del indice para que suba en la lista
+            index = checkIndex(listaMusica, index, 'm')
         #   Si el botón 8 es presionado, 
         elif(teclado == '8'):
-            #   Incrementa el indice de la lista de canciones (baja en la lista)
-            index += 1
+            #   Actualiza el valor del indice para que baje en la lista
+            index = checkIndex(listaMusica, index, 'M')
         #   Si el botón 5 es presionado, se selecciona una canción nueva
         elif(teclado == '5'):
             #   Carga la canción del indice actual
@@ -102,12 +150,13 @@ def reproducingMusic():
             mixer.music.play()
         #   Si el botón 1 es presionado, se reproduce la canción anterior
         elif(teclado == '1'):
-            index -= 1
+            #   Regresa el indice dependiendo de si se acabó la lista o no
+            index = checkIndex(listaMusica, index, 'm')
             try:
                 #   Carga la canción del indice previo
-                mixer.music.load(listaMusica[index - 1])
+                mixer.music.load(listaMusica[index])
                 #   Carga los datos de la canción del indice actual
-                metadatos = getSongStuff(listaMusica, index - 1)
+                metadatos = getSongStuff(listaMusica, index)
                 #   Reproduce la canción
                 mixer.music.play()
             except:
@@ -120,12 +169,13 @@ def reproducingMusic():
                 mixer.music.play()
         #   Si el botón 3 es presionado, se reproduce la canción siguiente
         elif(teclado == '3'):
-            index += 1
+            #   Regresa el indice dependiendo de si se acabó la lista o no
+            index = checkIndex(listaMusica, index, 'M')
             try:
                 #   Carga la canción del siguiente indice
-                mixer.music.load(listaMusica[index + 1])
+                mixer.music.load(listaMusica[index])
                 #   Carga los datos de la canción del indice actual
-                metadatos = getSongStuff(listaMusica, index + 1)
+                metadatos = getSongStuff(listaMusica, index)
                 #   Reproduce la canción
                 mixer.music.play()
             except:
@@ -156,11 +206,21 @@ def reproducingMusic():
             elif(contMute == 1):
                 contMute = 0
                 volumen = temp
+        elif(teclado == '*'):
+            #   Genera un indice aleatorio
+            index = shuffle(listaMusica, index)
+             #   Carga la canción del siguiente indice
+            mixer.music.load(listaMusica[index])
+            #   Carga los datos de la canción del indice actual
+            metadatos = getSongStuff(listaMusica, index)
+            #   Reproduce la canción
+            mixer.music.play()
         elif(teclado == '0'):
             break
 
         mixer.music.set_volume(volumen)
         print(listaMusica[index])
+        print("Indice", index)
     #   Para la reproducción de musica
     mixer.music.stop()
 
