@@ -163,7 +163,7 @@ def reproducingMusic():
             mixer.music.load(listaMusica[index])
             #   Carga los datos de la canción del indice actual
             metadatos = getSongStuff(listaMusica, index)
-            initFreq()
+            initFreq(listaMusica, index)
             #   Reproduce la canción
             mixer.music.play()
         #   Si el botón 1 es presionado, se reproduce la canción anterior
@@ -176,7 +176,7 @@ def reproducingMusic():
                 #   Carga los datos de la canción del indice actual
                 metadatos = getSongStuff(listaMusica, index)
                 #   Reproduce la canción
-                initFreq()
+                initFreq(listaMusica, index)
                 mixer.music.play()
             except:
                 print("El indice o el archivo es invalido, o se acabó la lista de canciones")
@@ -185,7 +185,7 @@ def reproducingMusic():
                 #   Carga los datos de la canción del indice actual
                 metadatos = getSongStuff(listaMusica, 0)
                 #   Reproduce la canción
-                initFreq()
+                initFreq(listaMusica, index)
                 mixer.music.play()
         #   Si el botón 3 es presionado, se reproduce la canción siguiente
         elif(teclado == '3'):
@@ -197,7 +197,7 @@ def reproducingMusic():
                 #   Carga los datos de la canción del indice actual
                 metadatos = getSongStuff(listaMusica, index)
                 #   Reproduce la canción
-                initFreq()
+                initFreq(listaMusica, index)
                 mixer.music.play()
             except:
                 print("El indice o el archivo es invalido, o se acabó la lista de canciones")
@@ -206,7 +206,7 @@ def reproducingMusic():
                 #   Carga los datos de la canción del indice actual
                 metadatos = getSongStuff(listaMusica, len(listaMusica)-1)
                 #   Reproduce la canción
-                initFreq()
+                initFreq(listaMusica, index)
                 mixer.music.play()
 
         #   Si el botón 7 es presionado,
@@ -236,7 +236,7 @@ def reproducingMusic():
             #   Carga los datos de la canción del indice actual
             metadatos = getSongStuff(listaMusica, index)
             #   Reproduce la canción
-            initFreq()
+            initFreq(listaMusica, index)
             mixer.music.play()
         elif(teclado == '@'):
             #   Itera en cada elemento de los metadatos
