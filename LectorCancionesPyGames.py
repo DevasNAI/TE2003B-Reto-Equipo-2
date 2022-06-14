@@ -6,7 +6,20 @@ from pygame import mixer
 
 #   https://stackoverflow.com/questions/3207219/how-do-i-list-all-files-of-a-directory
 def contenidoMusical():
+    """
+        Esta funcion regresa una lista con los archivos .mp3
+        del directorio.
+        
+    """
+    #   Obtiene la lista de los archivos en la carpeta
     listaMusica = os.listdir()
+    #   Para cada elemento en la lista, borra los que no son .mp3
+    for i in listaMusica:
+        #   Si el elemento de la lista no termina con 3, lo borra.
+        if(i[-1] != '3'):
+            listaMusica.remove(i)
+            
+    print(listaMusica)
     return listaMusica
 
 #   Se definen las funciones de musica()
@@ -89,11 +102,12 @@ def reproducingMusic():
             mixer.music.play()
         #   Si el botón 1 es presionado, se reproduce la canción anterior
         elif(teclado == '1'):
+            index -= 1
             try:
                 #   Carga la canción del indice previo
                 mixer.music.load(listaMusica[index - 1])
                 #   Carga los datos de la canción del indice actual
-                metadatos = getSongStuff(listaMusica, index)
+                metadatos = getSongStuff(listaMusica, index - 1)
                 #   Reproduce la canción
                 mixer.music.play()
             except:
@@ -101,11 +115,12 @@ def reproducingMusic():
                 #   Carga la primer canción de la lista
                 mixer.music.load(listaMusica[0])
                 #   Carga los datos de la canción del indice actual
-                metadatos = getSongStuff(0)
+                metadatos = getSongStuff(listaMusica, 0)
                 #   Reproduce la canción
                 mixer.music.play()
         #   Si el botón 3 es presionado, se reproduce la canción siguiente
         elif(teclado == '3'):
+            index += 1
             try:
                 #   Carga la canción del siguiente indice
                 mixer.music.load(listaMusica[index + 1])
@@ -130,7 +145,7 @@ def reproducingMusic():
         elif(teclado == '9'):
             #   Reproduce la canción
             mixer.music.unpause()
-        #   Si la tecla # es presoinada, Mutea por completo el volumen
+        #   Si la tecla # es presionada, Mutea por completo el volumen
         elif(teclado == '#'):
             #   Si el contador de mute es 0, se pone en Mute
             if(contMute == 0):
@@ -145,6 +160,7 @@ def reproducingMusic():
             break
 
         mixer.music.set_volume(volumen)
+        print(listaMusica[index])
     #   Para la reproducción de musica
     mixer.music.stop()
 
