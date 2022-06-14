@@ -1,9 +1,23 @@
 import os
 import glob
+import serial
 import eyed3
 import random
+import time
+from time import sleep
 from pygame import mixer
 
+
+def serialInit():
+    #Configure the serial port
+    ser = serial.Serial(
+            '/dev/ttyUSB0',  #port detected for Arduino board
+            9600,  #baud rate for serial communication
+            timeout=0,
+            bytesize=serial.EIGHTBITS,
+            parity=serial.PARITY_NONE,
+            stopbits=serial.STOPBITS_ONE)
+    return ser
 
 #   https://stackoverflow.com/questions/3207219/how-do-i-list-all-files-of-a-directory
 def contenidoMusical():
@@ -105,26 +119,27 @@ def reproducingMusic():
     """
         Esta funcion reproduce la musica
     """
-    ##  Genera una instancia de la lista de música adentro de la carpeta
+    #  Genera una instancia de la lista de música adentro de la carpeta
     listaMusica = contenidoMusical()
     #   Inicializa la reproducción de la música
     playMusica(listaMusica)
+    #   Objeto serial
+    #ser = serialInit()
 
-    
     #   Inicia a sonar la música
     mixer.music.play()
-    #   Lista auxiliar
-
+    #   Volumen 
     volumen = 0.1
-    temp = volumen
-    contMute = 0
+    #  Índice de inicialización
     index = 0
     #   0  es volumen temporal, 2 es contadorMute
     auxParam = [volumen, 0]
-
+    metadatos = getSongStuff(listaMusica, index)
     while(1):
         #   a es el input que recibe del teclado matricial
         teclado = input("Ingresa si quieres subir volumen o bajar: ")
+        #   Lee un valor del teclado matricial
+        #teclado = ser.read()
         #   Si el botón 2 es presionado, sube el volumen de la canción
         if(teclado == '6'):
             volumen += 0.1
@@ -215,12 +230,19 @@ def reproducingMusic():
             metadatos = getSongStuff(listaMusica, index)
             #   Reproduce la canción
             mixer.music.play()
-        elif(teclado == '0'):
+        elif(teclado == '@'):
+            #   Itera en cada elemento de los metadatos
+            for i in metadatos:
+                #   Manda el elemento actual de los metadatos en formato ascii
+                #ser.write(str(i).encode('ascii') )
+                print(str(i).encode('ascii') )
+        #   Si presiona A, muere el programa
+        elif(teclado == 'A'):
             break
-
+        #   Ajusta el volumen con el nuevo valor
         mixer.music.set_volume(volumen)
+        #   Muestra el archivo de la canción actual
         print(listaMusica[index])
-        print("Indice", index)
     #   Para la reproducción de musica
     mixer.music.stop()
 
