@@ -1,6 +1,7 @@
 import os, glob, serial, eyed3
 import random
 import time
+from serial import Serial
 import vlc
 import mutagen.mp3
 from time import sleep
@@ -9,13 +10,14 @@ from pygame import mixer
 
 def serialInit():
     #Configure the serial port
-    ser = serial.Serial(
-            '/dev/ttyUSB0',  #port detected for Arduino board
-            9600,  #baud rate for serial communication
-            timeout=0,
-            bytesize=serial.EIGHTBITS,
-            parity=serial.PARITY_NONE,
-            stopbits=serial.STOPBITS_ONE)
+   # ser = serial.Serial(
+     #       '/dev/ttyUSB0',  #port detected for Arduino board
+    #        9600,  #baud rate for serial communication
+   #         timeout=0,
+  #          bytesize=serial.EIGHTBITS,
+ #           parity=serial.PARITY_NONE,
+#            stopbits=serial.STOPBITS_ONE)
+    ser = serial.Serial("/dev/ttyUSB0", baudrate = 9600, parity=serial.PARITY_NONE,stopbits=serial.STOPBITS_ONE, bytesize=serial.EIGHTBITS, timeout=0)
     return ser
 
 #   https://stackoverflow.com/questions/3207219/how-do-i-list-all-files-of-a-directory
@@ -52,7 +54,7 @@ def playMusica(listaMusica):
     mixer.music.load(listaMusica[0])
     #   Le pone volumen mínimo a la canción.
     #   Limite de volumen es de 0 a 1.
-    mixer.music.set_volume(0.2)
+    mixer.music.set_volume(0.9)
 def initFreq(listaMusica, index):
     mp3 = mutagen.mp3.MP3(listaMusica[index])
     mixer.init(frequency=mp3.info.sample_rate)
@@ -126,7 +128,7 @@ def reproducingMusic():
     #   Inicializa la reproducción de la música
     playMusica(listaMusica)
     #   Objeto serial
-    #ser = serialInit()
+    ser = serialInit()
 
     #   Inicia a sonar la música
     mixer.music.play()
@@ -139,9 +141,10 @@ def reproducingMusic():
     metadatos = getSongStuff(listaMusica, index)
     while(1):
         #   a es el input que recibe del teclado matricial
-        teclado = input("Ingresa si quieres subir volumen o bajar: ")
+        #teclado = input("Ingresa si quieres subir volumen o bajar: ")
         #   Lee un valor del teclado matricial
-        #teclado = ser.read()
+        teclado = ser.read().decode('ascii')
+        print(teclado)
         #   Si el botón 2 es presionado, sube el volumen de la canción
         if(teclado == '6'):
             volumen += 0.1
