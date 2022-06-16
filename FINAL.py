@@ -142,8 +142,7 @@ def shuffle():
     rIndex = random.randint(0, (len(listaMusica)-1) )
     while(rIndex == index):
         rIndex = random.randint(0, (len(listaMusica)-1) )
-    return rIndex
-
+    index = rIndex
 
 def newMusic():
     global listaMusica, index
@@ -189,8 +188,7 @@ def stopPlaySong():
 
 def sendMetadatos():
      #   Itera en cada elemento de los metadatos
-    for i in metadatos:
-        for j in len(i):
+    for i in metadatos[0]:
             ser.write(str(i).encode('ascii') )
 
 
