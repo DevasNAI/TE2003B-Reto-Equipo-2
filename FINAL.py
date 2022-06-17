@@ -50,7 +50,7 @@ listaMusica = contenidoMusical()
 #   Volumen 
 volumen = 0.5
 #  Índice de inicialización
-index = 4
+index = 2
 #   0  es volumen temporal, 2 es contadorMute
 auxParam = [volumen, 0]
 def setVolumen():
@@ -190,7 +190,8 @@ def sendMetadatos():
      #   Itera en cada elemento de los metadatos
     for i in metadatos[0]:
         for j in i:
-            ser.write(str(j).encode('ascii') )
+	       
+	        ser.write(str(j).encode() )
 
 
 
