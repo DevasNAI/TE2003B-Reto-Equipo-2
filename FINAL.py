@@ -189,7 +189,8 @@ def stopPlaySong():
 def sendMetadatos():
      #   Itera en cada elemento de los metadatos
     for i in metadatos[0]:
-            ser.write(str(i).encode('ascii') )
+        for j in i:
+            ser.write(str(j).encode('ascii') )
 
 
 
